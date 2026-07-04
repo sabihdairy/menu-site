@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr' lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=5.0' name='viewport'/>
+<!-- ضروري لتوافق بلوجر (روابط الأدمن، السياسات، RSS ...الخ) -->
+<b:include data='blog' name='all-head-content'/>
+<title><data:blog.pageTitle/></title>
+<meta name="description" content="متجر إلكتروني لعرض المنتجات وتفاصيلها - اطلب الآن مباشرة عبر واتساب"/>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+<!-- خط عربي -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+
+<!-- ============================================================
+     ✏️ أيقونة المتجر (Favicon) - غيّر الرابط بشعارك الخاص
+     ============================================================ -->
+<link rel="icon" href="https://images.pexels.com/photos/5779927/pexels-photo-5779927.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=64&amp;w=64"/>
+
+<style>
+  :root{
+    --primary-bg: #F2F9FF;   /* اللون الأساسي - خلفية فاتحة */
+    --dark-blue:  #0E4FB3;   /* اللون الثاني - أزرق غامق */
+    --sky-blue:   #2FA1D6;   /* اللون الثالث - أزرق سماوي */
+    --dark-blue-2: #093a86;
+    --text-dark: #0b2545;
+    --text-gray: #5b6b7b;
+  }
+  *{ font-family: 'Cairo', sans-serif; }
+  html{ scroll-behavior: smooth; }
+  body{ background: var(--primary-bg); color: var(--text-dark); }
+
+  ::-webkit-scrollbar{ width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb{ background: var(--sky-blue); border-radius: 10px; }
+  ::-webkit-scrollbar-track{ background: #dff0fc; }
+
+  .hide-scrollbar::-webkit-scrollbar{ display:none; }
+  .hide-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+
+  /* ==== شكل الكارت الخاص بالمنتج (Blob) ==== */
+  .product-card{
+    position: relative;
+    background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -12px rgba(14,79,179,0.25);
+    transition: transform .35s ease, box-shadow .35s ease;
+    border: 1px solid #e3f1fc;
+  }
+  .product-card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -14px rgba(14,79,179,0.35);
+  }
+  .blob-behind{
+    position:absolute;
+    top:-30px; right:-40px;
+    width:170px; height:170px;
+    background: linear-gradient(135deg, var(--sky-blue), var(--dark-blue));
+    opacity:.18;
+    border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    z-index:0;
+  }
+  .blob-corner-left{
+    position:absolute; bottom:70px; left:-25px;
+    width:90px;height:90px;
+    background: var(--sky-blue);
+    opacity:.15;
+    border-radius: 40% 60% 65% 35% / 55% 40% 60% 45%;
+    z-index:0;
+  }
+  .product-img-wrap{
+    position:relative;
+    width:150px; height:150px;
+    margin: 26px auto 0;
+    z-index:1;
+  }
+  .product-img-blob{
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at 30% 30%, #eaf6ff, var(--sky-blue) 85%);
+    border-radius: 58% 42% 60% 40% / 50% 55% 45% 50%;
+    animation: floatBlob 6s ease-in-out infinite;
+  }
+  @keyframes floatBlob{
+    0%,100%{ border-radius: 58% 42% 60% 40% / 50% 55% 45% 50%; }
+    50%{ border-radius: 45% 55% 40% 60% / 55% 45% 55% 45%; }
+  }
+  .product-img{
+    position:relative;
+    z-index:2;
+    width:100%; height:100%;
+    object-fit: cover;
+    border-radius:50%;
+    border:5px solid #fff;
+    box-shadow: 0 8px 18px rgba(14,79,179,.25);
+  }
+  .price-badge{
+    background: linear-gradient(90deg, var(--sky-blue), var(--dark-blue));
+    color:#fff;
+    font-weight:800;
+    padding:8px 16px;
+    border-radius: 999px;
+    font-size:.8rem;
+    white-space:nowrap;
+    box-shadow: 0 6px 14px rgba(14,79,179,.35);
+    z-index:2;
+  }
+  .product-footer{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding: 8px 16px 18px;
+  }
+  .cat-badge{
+    display:inline-block;
+    font-size:.7rem;
+    font-weight:700;
+    color:var(--dark-blue);
+    background:#e6f4fd;
+    padding:3px 12px;
+    border-radius:999px;
+  }
+
+  .btn-primary{
+    background: linear-gradient(90deg, var(--dark-blue), var(--sky-blue));
+    color:#fff;
+    transition: filter .2s, transform .2s;
+  }
+  .btn-primary:hover{ filter:brightness(1.08); transform: translateY(-2px); }
+
+  .whatsapp-btn{
+    background:#25D366; color:#fff;
+  }
+  .whatsapp-btn:hover{ filter:brightness(1.05); }
+
+  .cat-pill{
+    white-space:nowrap;
+    transition: all .25s;
+    border:2px solid var(--sky-blue);
+    color: var(--dark-blue);
+  }
+  .cat-pill.active, .cat-pill:hover{
+    background: linear-gradient(90deg, var(--dark-blue), var(--sky-blue));
+    color:#fff;
+    border-color: transparent;
+  }
+
+  .modal-overlay{
+    background: rgba(11,37,69,.55);
+    backdrop-filter: blur(3px);
+  }
+
+  .fade-in{ animation: fadeIn .3s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(15px);} to{opacity:1; transform:translateY(0);} }
+
+  .slide-in{ animation: slideIn .35s ease; }
+  @keyframes slideIn{ from{ transform: translateX(100%);} to{ transform: translateX(0);} }
+
+  .toast{
+    animation: toastIn .3s ease, toastOut .3s ease 2.2s forwards;
+  }
+  @keyframes toastIn{ from{opacity:0; transform: translateY(20px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes toastOut{ to{opacity:0; transform: translateY(20px);} }
+
+  .section-title{
+    position:relative;
+    display:inline-block;
+  }
+  .section-title::after{
+    content:"";
+    position:absolute;
+    bottom:-10px; right:50%; transform:translateX(50%);
+    width:70px; height:5px;
+    border-radius:10px;
+    background: linear-gradient(90deg, var(--sky-blue), var(--dark-blue));
+  }
+
+  .float-btn{
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+  }
+</style>
+</head>
+<body class="text-[--text-dark]">
+
+<!-- =====================================================================================
+     شريط علوي صغير (اختياري) - رقم التواصل + السوشيال ميديا
+     ✏️ عدل الأرقام والروابط من هنا
+===================================================================================== -->
+<div class="hidden sm:flex justify-between items-center px-6 py-2 text-xs text-white" style="background:var(--dark-blue-2)">
+  <div class="flex items-center gap-4">
+    <span id="topbar-phone">📞 01000000000</span>
+    <span id="topbar-email">✉️ info@mystore.com</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <a href="#" target="_blank" class="hover:text-[--sky-blue]" title="فيسبوك" id="social-facebook">Facebook</a>
+    <a href="#" target="_blank" class="hover:text-[--sky-blue]" title="انستجرام" id="social-instagram">Instagram</a>
+    <a href="#" target="_blank" class="hover:text-[--sky-blue]" title="تيك توك" id="social-tiktok">TikTok</a>
+  </div>
+</div>
+
+<!-- ===================== الهيدر الرئيسي ===================== -->
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+    <!-- الشعار -->
+    <a href="#home" class="flex items-center gap-2 shrink-0">
+      <span class="w-11 h-11 rounded-full flex items-center justify-center text-white text-xl font-black" style="background: linear-gradient(135deg,var(--dark-blue),var(--sky-blue));">🛍️</span>
+      <span class="font-black text-lg sm:text-xl" style="color:var(--dark-blue)" id="store-name">متجر السعادة</span>
+    </a>
+
+    <!-- روابط التنقل (شاشات كبيرة) -->
+    <nav class="hidden md:flex items-center gap-7 font-semibold text-sm">
+      <a href="#home" class="hover:text-[--sky-blue]">الرئيسية</a>
+      <a href="#products" class="hover:text-[--sky-blue]">المنتجات</a>
+      <a href="#about" class="hover:text-[--sky-blue]">من نحن</a>
+      <a href="#contact" class="hover:text-[--sky-blue]">تواصل معنا</a>
+    </nav>
+
+    <!-- البحث + السلة -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden sm:flex items-center bg-[--primary-bg] rounded-full px-3 py-2 border border-[--sky-blue]/30">
+        <input id="search-input" type="text" placeholder="ابحث عن منتج..." class="bg-transparent outline-none text-sm w-36 lg:w-52"/>
+        <span>🔍</span>
+      </div>
+      <button onclick="openCart()" class="relative w-11 h-11 rounded-full flex items-center justify-center btn-primary text-lg">
+        🛒
+        <span id="cart-count" class="absolute -top-1 -left-1 bg-red-500 text-white text-[11px] rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
+      </button>
+      <button onclick="toggleMobileMenu()" class="md:hidden w-11 h-11 rounded-full flex items-center justify-center bg-[--primary-bg] text-xl">☰</button>
+    </div>
+  </div>
+
+  <!-- قائمة الموبايل -->
+  <div id="mobile-menu" class="hidden md:hidden flex-col bg-white border-t px-4 py-3 gap-3 font-semibold text-sm">
+    <div class="flex items-center bg-[--primary-bg] rounded-full px-3 py-2 mb-2">
+      <input id="search-input-mobile" type="text" placeholder="ابحث عن منتج..." class="bg-transparent outline-none text-sm w-full"/>
+      <span>🔍</span>
+    </div>
+    <a href="#home" class="py-2 border-b" onclick="toggleMobileMenu()">الرئيسية</a>
+    <a href="#products" class="py-2 border-b" onclick="toggleMobileMenu()">المنتجات</a>
+    <a href="#about" class="py-2 border-b" onclick="toggleMobileMenu()">من نحن</a>
+    <a href="#contact" class="py-2" onclick="toggleMobileMenu()">تواصل معنا</a>
+  </div>
+</header>
+
+<!-- ===================== قسم الهيرو ===================== -->
+<section id="home" class="relative overflow-hidden" style="background: linear-gradient(135deg, var(--dark-blue), var(--sky-blue));">
+  <div class="absolute -top-16 -left-16 w-72 h-72 bg-white/10 rounded-full"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full translate-y-1/2"></div>
+  <div class="max-w-7xl mx-auto px-6 py-16 sm:py-24 relative z-10 grid md:grid-cols-2 items-center gap-10">
+    <div class="text-white text-center md:text-right">
+      <span class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold mb-4">🚀 توصيل سريع لجميع المناطق</span>
+      <h1 class="text-3xl sm:text-5xl font-black leading-tight mb-4">أطيب المنتجات <br/> بين ايديك دلوقتي</h1>
+      <p class="text-white/90 mb-8 max-w-md mx-auto md:mx-0">تصفح تشكيلتنا المميزة واختر ما يعجبك، وأرسل طلبك مباشرة عبر واتساب بضغطة واحدة.</p>
+      <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+        <a href="#products" class="bg-white text-[--dark-blue] font-bold px-7 py-3 rounded-full hover:opacity-90 transition">تسوق الآن</a>
+        <a href="#contact" class="border-2 border-white text-white font-bold px-7 py-3 rounded-full hover:bg-white/10 transition">تواصل معنا</a>
+      </div>
+    </div>
+    <div class="hidden md:flex justify-center">
+      <img src="https://images.pexels.com/photos/5779927/pexels-photo-5779927.jpeg?auto=compress&amp;cs=tinysrgb&amp;h=500&amp;w=500" class="w-80 h-80 object-cover rounded-full border-8 border-white/30 shadow-2xl" alt="منتج مميز"/>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== شريط المميزات ===================== -->
+<section class="max-w-7xl mx-auto px-6 -mt-8 relative z-20">
+  <div class="bg-white rounded-2xl shadow-lg grid grid-cols-2 md:grid-cols-4 gap-4 p-6 text-center">
+    <div>
+      <div class="text-3xl mb-1">🚚</div>
+      <p class="font-bold text-sm">توصيل سريع</p>
+    </div>
+    <div>
+      <div class="text-3xl mb-1">✅</div>
+      <p class="font-bold text-sm">جودة مضمونة</p>
+    </div>
+    <div>
+      <div class="text-3xl mb-1">💳</div>
+      <p class="font-bold text-sm">الدفع عند الاستلام</p>
+    </div>
+    <div>
+      <div class="text-3xl mb-1">💬</div>
+      <p class="font-bold text-sm">طلب سهل عبر واتساب</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== قسم المنتجات ===================== -->
+<section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+  <div class="text-center mb-10">
+    <h2 class="section-title text-2xl sm:text-3xl font-black mb-4" style="color:var(--dark-blue)">تصفح منتجاتنا</h2>
+    <p class="text-[--text-gray] mt-4">اختر القسم اللي يعجبك وشوف أحلى المنتجات</p>
+  </div>
+
+  <!-- الأقسام -->
+  <div id="categories-bar" class="flex gap-3 overflow-x-auto hide-scrollbar pb-3 mb-8 justify-start sm:justify-center"></div>
+
+  <!-- شبكة المنتجات -->
+  <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-7"></div>
+
+  <p id="no-results" class="hidden text-center text-[--text-gray] py-10 font-bold">لا توجد منتجات مطابقة 🙁</p>
+</section>
+
+<!-- ===================== قسم من نحن ===================== -->
+<section id="about" class="py-16" style="background:linear-gradient(180deg,#fff,var(--primary-bg));">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="section-title text-2xl sm:text-3xl font-black mb-6" style="color:var(--dark-blue)">من نحن</h2>
+    <p class="text-[--text-gray] leading-8 mt-6 max-w-3xl mx-auto" id="about-text">
+      نحن متجر متخصص في تقديم أفضل المنتجات بجودة عالية وأسعار مناسبة، هدفنا هو راحة عملائنا من أول لحظة تصفح إلى استلام الطلب. تقدر تطلب أي منتج بسهولة وهيتم التواصل معك مباشرة عبر واتساب لتأكيد الطلب والتوصيل.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== قسم تواصل معنا ===================== -->
+<section id="contact" class="py-16" style="background:var(--primary-bg)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12">
+      <h2 class="section-title text-2xl sm:text-3xl font-black mb-4" style="color:var(--dark-blue)">تواصل معنا</h2>
+      <p class="text-[--text-gray] mt-4">إحنا هنا عشان نساعدك، تواصل معنا بأي طريقة تناسبك</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8 mb-12">
+      <!-- بيانات التواصل -->
+      <div class="bg-white rounded-2xl shadow-lg p-7">
+        <h3 class="font-black text-lg mb-5" style="color:var(--dark-blue)">بيانات التواصل</h3>
+        <ul class="space-y-4 text-sm">
+          <li class="flex items-center gap-3"><span class="text-xl">📞</span> <span id="contact-phone">01000000000</span></li>
+          <li class="flex items-center gap-3"><span class="text-xl">💬</span> <span id="contact-whatsapp">01000000000 (واتساب)</span></li>
+          <li class="flex items-center gap-3"><span class="text-xl">✉️</span> <span id="contact-email">info@mystore.com</span></li>
+          <li class="flex items-center gap-3"><span class="text-xl">🕒</span> <span id="contact-hours">يوميًا من 10 صباحًا حتى 12 منتصف الليل</span></li>
+        </ul>
+        <div class="flex gap-3 mt-6">
+          <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center btn-primary" id="contact-social-fb">f</a>
+          <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center btn-primary" id="contact-social-ig">ig</a>
+          <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center whatsapp-btn" id="contact-social-wa">wa</a>
+        </div>
+      </div>
+
+      <!-- نموذج تواصل سريع -->
+      <div class="bg-white rounded-2xl shadow-lg p-7 lg:col-span-2">
+        <h3 class="font-black text-lg mb-5" style="color:var(--dark-blue)">ابعتلنا رسالة (عبر واتساب)</h3>
+        <form id="contact-form" class="grid sm:grid-cols-2 gap-4" onsubmit="sendContactForm(event)">
+          <input required type="text" id="cf-name" placeholder="الاسم بالكامل" class="border border-[--sky-blue]/40 rounded-xl px-4 py-3 outline-none focus:border-[--sky-blue] sm:col-span-1"/>
+          <input required type="tel" id="cf-phone" placeholder="رقم الهاتف" class="border border-[--sky-blue]/40 rounded-xl px-4 py-3 outline-none focus:border-[--sky-blue] sm:col-span-1"/>
+          <textarea required id="cf-message" placeholder="اكتب رسالتك هنا..." rows="4" class="border border-[--sky-blue]/40 rounded-xl px-4 py-3 outline-none focus:border-[--sky-blue] sm:col-span-2"></textarea>
+          <button type="submit" class="btn-primary font-bold py-3 rounded-xl sm:col-span-2">إرسال عبر واتساب 💬</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- الفروع -->
+    <h3 class="font-black text-xl mb-6 text-center" style="color:var(--dark-blue)">فروعنا</h3>
+    <div id="branches-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- ===================== الفوتر ===================== -->
+<footer class="text-white pt-12 pb-6" style="background: linear-gradient(135deg,var(--dark-blue-2),var(--dark-blue));">
+  <div class="max-w-7xl mx-auto px-6 grid sm:grid-cols-3 gap-8 mb-8">
+    <div>
+      <h4 class="font-black text-lg mb-3" id="footer-store-name">متجر السعادة</h4>
+      <p class="text-white/80 text-sm leading-7">متجرك المفضل لأجود المنتجات، اطلب بسهولة واستلم بسرعة.</p>
+    </div>
+    <div>
+      <h4 class="font-black mb-3">روابط سريعة</h4>
+      <ul class="space-y-2 text-sm text-white/80">
+        <li><a href="#home" class="hover:text-white">الرئيسية</a></li>
+        <li><a href="#products" class="hover:text-white">المنتجات</a></li>
+        <li><a href="#about" class="hover:text-white">من نحن</a></li>
+        <li><a href="#contact" class="hover:text-white">تواصل معنا</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-black mb-3">تواصل معنا</h4>
+      <p class="text-white/80 text-sm mb-1" id="footer-phone">📞 01000000000</p>
+      <p class="text-white/80 text-sm" id="footer-email">✉️ info@mystore.com</p>
+    </div>
+  </div>
+  <div class="text-center text-white/70 text-xs border-t border-white/20 pt-5">
+    © <span id="year"></span> جميع الحقوق محفوظة لـ <span id="footer-store-name-2">متجر السعادة</span>
+  </div>
+</footer>
+
+<!-- ===================== زر واتساب عائم ===================== -->
+<a id="floating-whatsapp" target="_blank" class="float-btn fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full whatsapp-btn flex items-center justify-center text-2xl">
+  💬
+</a>
+
+<!-- ===================== نافذة تفاصيل المنتج ===================== -->
+<div id="product-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden relative fade-in max-h-[90vh] overflow-y-auto">
+    <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-9 h-9 bg-white/90 rounded-full shadow flex items-center justify-center font-bold">✕</button>
+    <div class="grid md:grid-cols-2">
+      <div class="p-6 flex items-center justify-center" style="background:var(--primary-bg)">
+        <img id="modal-img" src="" class="w-full max-w-xs rounded-2xl object-cover aspect-square shadow-lg"/>
+      </div>
+      <div class="p-6 sm:p-8 flex flex-col">
+        <span id="modal-cat" class="cat-badge w-fit mb-3"></span>
+        <h3 id="modal-name" class="text-2xl font-black mb-2" style="color:var(--dark-blue)"></h3>
+        <p id="modal-desc" class="text-[--text-gray] text-sm leading-7 mb-4"></p>
+        <div id="modal-price" class="text-2xl font-black mb-5" style="color:var(--sky-blue)"></div>
+
+        <div class="flex items-center gap-3 mb-6">
+          <span class="font-bold text-sm">الكمية:</span>
+          <button onclick="changeModalQty(-1)" class="w-9 h-9 rounded-full bg-[--primary-bg] font-bold text-lg">-</button>
+          <span id="modal-qty" class="font-bold text-lg w-6 text-center">1</span>
+          <button onclick="changeModalQty(1)" class="w-9 h-9 rounded-full bg-[--primary-bg] font-bold text-lg">+</button>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 mt-auto">
+          <button onclick="addToCartFromModal()" class="flex-1 btn-primary font-bold py-3 rounded-xl">أضف للسلة 🛒</button>
+          <button onclick="orderNowFromModal()" class="flex-1 whatsapp-btn font-bold py-3 rounded-xl">اطلب الآن 💬</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== سلة الطلبات الجانبية ===================== -->
+<div id="cart-overlay" onclick="closeCart()" class="hidden fixed inset-0 z-50 modal-overlay"></div>
+<div id="cart-drawer" class="hidden fixed top-0 left-0 h-full w-full sm:w-96 bg-white z-50 slide-in flex flex-col shadow-2xl">
+  <div class="flex items-center justify-between p-5 border-b" style="background:var(--primary-bg)">
+    <h3 class="font-black text-lg" style="color:var(--dark-blue)">سلة الطلبات 🛒</h3>
+    <button onclick="closeCart()" class="w-9 h-9 rounded-full bg-white shadow flex items-center justify-center font-bold">✕</button>
+  </div>
+  <div id="cart-items" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+  <div class="p-5 border-t">
+    <div class="flex justify-between font-bold mb-4">
+      <span>الإجمالي:</span>
+      <span id="cart-total" style="color:var(--dark-blue)">0 ج.م</span>
+    </div>
+    <button onclick="sendCartToWhatsApp()" class="w-full whatsapp-btn font-bold py-3 rounded-xl mb-2">إتمام الطلب عبر واتساب 💬</button>
+    <button onclick="closeCart()" class="w-full bg-[--primary-bg] font-bold py-3 rounded-xl">متابعة التسوق</button>
+  </div>
+</div>
+
+<!-- توست إشعار -->
+<div id="toast" class="hidden fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-[--dark-blue] text-white px-6 py-3 rounded-full font-bold shadow-xl toast"></div>
+
+<script>
+//<![CDATA[
+/* =====================================================================================================
+   ⚙️ ================== منطقة الإعدادات الرئيسية (عدّل من هنا فقط) ==================
+   كل بيانات المتجر، المنتجات، الأقسام، الفروع موجودة هنا. مفيش داعي تلمس أي حاجة تانية في الكود.
+===================================================================================================== */
+const CONFIG = {
+
+  // ---------- بيانات المتجر العامة ----------
+  storeName: "متجر السعادة",
+  whatsappNumber: "201000000000", // ✏️ رقم الواتساب بصيغة دولية بدون + وبدون أصفار زيادة (مصر: 20 + رقم الموبايل بدون الصفر)
+  currency: "ج.م",
+
+  contactInfo: {
+    phone: "01000000000",
+    whatsappDisplay: "01000000000",
+    email: "info@mystore.com",
+    hours: "يوميًا من 10 صباحًا حتى 12 منتصف الليل",
+    facebook: "https://facebook.com/",
+    instagram: "https://instagram.com/",
+    tiktok: "https://tiktok.com/"
+  },
+
+  aboutText: "نحن متجر متخصص في تقديم أفضل المنتجات بجودة عالية وأسعار مناسبة، هدفنا هو راحة عملائنا من أول لحظة تصفح إلى استلام الطلب. تقدر تطلب أي منتج بسهولة وهيتم التواصل معك مباشرة عبر واتساب لتأكيد الطلب والتوصيل.",
+
+  // ---------- أقسام المنتجات ----------
+  // ✏️ لإضافة قسم جديد: أضف عنصر جديد بنفس الشكل { id: "معرف_فريد", name: "اسم القسم يظهر للعميل" }
+  categories: [
+    { id: "fruits", name: "أطباق فواكه" },
+    { id: "sweets", name: "حلويات" },
+    { id: "juices", name: "عصائر" }
+  ],
+
+  // ---------- المنتجات ----------
+  // ✏️ لإضافة منتج جديد: انسخ أحد العناصر التالية وعدل بياناته
+  // category: لازم تكون نفس الـ id بتاع أحد الأقسام أعلاه
+  products: [
+    {
+      id: 1,
+      name: "طبق فاكهة ملكي",
+      category: "fruits",
+      price: 65,
+      image: "https://images.pexels.com/photos/5779927/pexels-photo-5779927.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "تشكيلة فواكه طازجة مختارة بعناية مع كريمة طبيعية، مثالية كوجبة خفيفة صحية ولذيذة."
+    },
+    {
+      id: 2,
+      name: "كوب فواكه بالكريمة",
+      category: "fruits",
+      price: 55,
+      image: "https://images.pexels.com/photos/14998101/pexels-photo-14998101.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "طبقات من الفواكه الطازجة مع كريمة مخفوقة فاخرة، طعم رائع في كل ملعقة."
+    },
+    {
+      id: 3,
+      name: "بارفيه فراولة بالبسكويت",
+      category: "sweets",
+      price: 60,
+      image: "https://images.pexels.com/photos/34487804/pexels-photo-34487804.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "طبقات من الفراولة الطازجة والبسكويت المقرمش مع كريمة ناعمة، حلوى لا تقاوم."
+    },
+    {
+      id: 4,
+      name: "تشكيلة حلويات فاخرة",
+      category: "sweets",
+      price: 70,
+      image: "https://images.pexels.com/photos/32397288/pexels-photo-32397288.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "تشكيلة متنوعة من أفخم أنواع الحلويات والكب كيك، مثالية للمناسبات والتجمعات."
+    },
+    {
+      id: 5,
+      name: "عصير برتقال طازج",
+      category: "juices",
+      price: 25,
+      image: "https://images.pexels.com/photos/37214597/pexels-photo-37214597.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "عصير برتقال طبيعي 100% معصور طازج، غني بفيتامين سي ومنعش في أي وقت."
+    },
+    {
+      id: 6,
+      name: "تشكيلة عصائر طبيعية",
+      category: "juices",
+      price: 30,
+      image: "https://images.pexels.com/photos/30841170/pexels-photo-30841170.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "مجموعة متنوعة من العصائر الطبيعية الطازجة بألوان وأطعمة مختلفة تناسب جميع الأذواق."
+    },
+    {
+      id: 7,
+      name: "تورتة شوكولاتة غنية",
+      category: "sweets",
+      price: 80,
+      image: "https://images.pexels.com/photos/28402363/pexels-photo-28402363.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "قطعة تورتة شوكولاتة غنية وطرية مع صوص شوكولاتة سائل، تجربة لا تفوّت لعشاق الشوكولاتة."
+    },
+    {
+      id: 8,
+      name: "كيك شوكولاتة بالكريز",
+      category: "sweets",
+      price: 75,
+      image: "https://images.pexels.com/photos/19791251/pexels-photo-19791251.jpeg?auto=compress&cs=tinysrgb&h=600&w=600",
+      desc: "كيك شوكولاتة طري مع طبقة كريز منعشة، توازن مثالي بين الحلاوة والانتعاش."
+    }
+  ],
+
+  // ---------- الفروع ----------
+  // ✏️ لإضافة فرع جديد انسخ عنصر وعدل الاسم والعنوان ورقم الهاتف
+  // لتغيير الخريطة: روح على maps.google.com وابحث عن موقع الفرع وانسخ رابط الصفحة وحطه بدل الرابط في mapQuery
+  branches: [
+    {
+      name: "الفرع الرئيسي - القاهرة",
+      address: "شارع التحرير، وسط البلد، القاهرة",
+      phone: "01000000000",
+      mapQuery: "Cairo, Egypt"
+    },
+    {
+      name: "فرع الإسكندرية",
+      address: "طريق الكورنيش، الإسكندرية",
+      phone: "01000000001",
+      mapQuery: "Alexandria, Egypt"
+    },
+    {
+      name: "فرع الجيزة",
+      address: "شارع الهرم، الجيزة",
+      phone: "01000000002",
+      mapQuery: "Giza, Egypt"
+    }
+  ]
+};
+/* ===================================================================================================
+   🚫 لا تعدل أي كود تحت هذا السطر إلا إذا كنت متأكد مما تفعله
+=================================================================================================== */
+
+let state = {
+  activeCategory: "all",
+  searchTerm: "",
+  cart: JSON.parse(localStorage.getItem("store_cart") || "{}"),
+  currentModalProduct: null,
+  modalQty: 1
+};
+
+function saveCart(){
+  localStorage.setItem("store_cart", JSON.stringify(state.cart));
+  updateCartCount();
+}
+
+function whatsappLink(message){
+  return "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent(message);
+}
+
+/* ---------------- تهيئة عامة ---------------- */
+function initGeneralInfo(){
+  document.title = CONFIG.storeName + " | تسوق أطيب المنتجات";
+  document.getElementById("store-name").textContent = CONFIG.storeName;
+  document.getElementById("footer-store-name").textContent = CONFIG.storeName;
+  document.getElementById("footer-store-name-2").textContent = CONFIG.storeName;
+  document.getElementById("year").textContent = new Date().getFullYear();
+  document.getElementById("about-text").textContent = CONFIG.aboutText;
+
+  document.getElementById("topbar-phone").textContent = "📞 " + CONFIG.contactInfo.phone;
+  document.getElementById("topbar-email").textContent = "✉️ " + CONFIG.contactInfo.email;
+  document.getElementById("social-facebook").href = CONFIG.contactInfo.facebook;
+  document.getElementById("social-instagram").href = CONFIG.contactInfo.instagram;
+  document.getElementById("social-tiktok").href = CONFIG.contactInfo.tiktok;
+
+  document.getElementById("contact-phone").textContent = CONFIG.contactInfo.phone;
+  document.getElementById("contact-whatsapp").textContent = CONFIG.contactInfo.whatsappDisplay + " (واتساب)";
+  document.getElementById("contact-email").textContent = CONFIG.contactInfo.email;
+  document.getElementById("contact-hours").textContent = CONFIG.contactInfo.hours;
+  document.getElementById("contact-social-fb").href = CONFIG.contactInfo.facebook;
+  document.getElementById("contact-social-ig").href = CONFIG.contactInfo.instagram;
+  document.getElementById("contact-social-wa").href = whatsappLink("مرحباً، أريد الاستفسار عن منتجاتكم");
+
+  document.getElementById("footer-phone").textContent = "📞 " + CONFIG.contactInfo.phone;
+  document.getElementById("footer-email").textContent = "✉️ " + CONFIG.contactInfo.email;
+
+  document.getElementById("floating-whatsapp").href = whatsappLink("مرحباً، أريد الاستفسار عن منتجاتكم");
+}
+
+/* ---------------- الأقسام ---------------- */
+function renderCategories(){
+  const bar = document.getElementById("categories-bar");
+  let html = `<button class="cat-pill active px-5 py-2 rounded-full font-bold text-sm" data-cat="all" onclick="selectCategory('all')">الكل</button>`;
+  CONFIG.categories.forEach(cat=>{
+    html += `<button class="cat-pill px-5 py-2 rounded-full font-bold text-sm" data-cat="${cat.id}" onclick="selectCategory('${cat.id}')">${cat.name}</button>`;
+  });
+  bar.innerHTML = html;
+}
+
+function selectCategory(catId){
+  state.activeCategory = catId;
+  document.querySelectorAll(".cat-pill").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.cat === catId);
+  });
+  renderProducts();
+}
+
+function getCategoryName(catId){
+  const c = CONFIG.categories.find(c=>c.id===catId);
+  return c ? c.name : catId;
+}
+
+/* ---------------- المنتجات ---------------- */
+function renderProducts(){
+  const grid = document.getElementById("products-grid");
+  const noResults = document.getElementById("no-results");
+  let list = CONFIG.products.filter(p=>{
+    const matchCat = state.activeCategory === "all" || p.category === state.activeCategory;
+    const matchSearch = p.name.toLowerCase().includes(state.searchTerm.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  if(list.length === 0){
+    grid.innerHTML = "";
+    noResults.classList.remove("hidden");
+    return;
+  }
+  noResults.classList.add("hidden");
+
+  grid.innerHTML = list.map(p => `
+    <div class="product-card fade-in">
+      <div class="blob-behind"></div>
+      <div class="blob-corner-left"></div>
+      <div class="cursor-pointer" onclick="openProductModal(${p.id})">
+        <div class="product-img-wrap">
+          <div class="product-img-blob"></div>
+          <img src="${p.image}" class="product-img" alt="${p.name}">
+        </div>
+        <div class="text-center px-3 mt-4">
+          <span class="cat-badge">${getCategoryName(p.category)}</span>
+          <h3 class="font-black mt-2 text-sm sm:text-base" style="color:var(--dark-blue)">${p.name}</h3>
+        </div>
+      </div>
+      <div class="product-footer mt-2">
+        <div class="price-badge">${p.price} ${CONFIG.currency}</div>
+        <button onclick="quickOrder(${p.id})" class="w-10 h-10 shrink-0 rounded-full whatsapp-btn flex items-center justify-center text-lg" title="اطلب الآن">💬</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ---------------- نافذة تفاصيل المنتج ---------------- */
+function openProductModal(id){
+  const p = CONFIG.products.find(p=>p.id===id);
+  if(!p) return;
+  state.currentModalProduct = p;
+  state.modalQty = 1;
+  document.getElementById("modal-img").src = p.image;
+  document.getElementById("modal-cat").textContent = getCategoryName(p.category);
+  document.getElementById("modal-name").textContent = p.name;
+  document.getElementById("modal-desc").textContent = p.desc;
+  document.getElementById("modal-price").textContent = p.price + " " + CONFIG.currency;
+  document.getElementById("modal-qty").textContent = 1;
+  document.getElementById("product-modal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+function closeProductModal(){
+  document.getElementById("product-modal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+function changeModalQty(delta){
+  state.modalQty = Math.max(1, state.modalQty + delta);
+  document.getElementById("modal-qty").textContent = state.modalQty;
+}
+function addToCartFromModal(){
+  if(!state.currentModalProduct) return;
+  addToCart(state.currentModalProduct.id, state.modalQty);
+  closeProductModal();
+}
+function orderNowFromModal(){
+  if(!state.currentModalProduct) return;
+  const p = state.currentModalProduct;
+  const qty = state.modalQty;
+  const total = p.price * qty;
+  const msg = `مرحباً، أريد طلب:\n\n🛍️ ${p.name}\nالكمية: ${qty}\nالسعر: ${p.price} ${CONFIG.currency}\nالإجمالي: ${total} ${CONFIG.currency}`;
+  window.open(whatsappLink(msg), "_blank");
+  closeProductModal();
+}
+function quickOrder(id){
+  const p = CONFIG.products.find(p=>p.id===id);
+  if(!p) return;
+  const msg = `مرحباً، أريد طلب:\n\n🛍️ ${p.name}\nالسعر: ${p.price} ${CONFIG.currency}`;
+  window.open(whatsappLink(msg), "_blank");
+}
+
+/* ---------------- السلة ---------------- */
+function addToCart(id, qty){
+  state.cart[id] = (state.cart[id] || 0) + qty;
+  saveCart();
+  showToast("تمت إضافة المنتج للسلة ✅");
+}
+function updateCartCount(){
+  const count = Object.values(state.cart).reduce((a,b)=>a+b, 0);
+  document.getElementById("cart-count").textContent = count;
+}
+function renderCart(){
+  const container = document.getElementById("cart-items");
+  const ids = Object.keys(state.cart);
+  if(ids.length === 0){
+    container.innerHTML = `<p class="text-center text-[--text-gray] mt-10">السلة فارغة حاليًا 🛒</p>`;
+    document.getElementById("cart-total").textContent = "0 " + CONFIG.currency;
+    return;
+  }
+  let total = 0;
+  container.innerHTML = ids.map(id=>{
+    const p = CONFIG.products.find(p=>p.id == id);
+    if(!p) return "";
+    const qty = state.cart[id];
+    total += p.price * qty;
+    return `
+      <div class="flex items-center gap-3 border-b pb-4">
+        <img src="${p.image}" class="w-16 h-16 rounded-xl object-cover">
+        <div class="flex-1">
+          <p class="font-bold text-sm">${p.name}</p>
+          <p class="text-xs text-[--text-gray]">${p.price} ${CONFIG.currency}</p>
+          <div class="flex items-center gap-2 mt-2">
+            <button onclick="changeCartQty(${id},-1)" class="w-7 h-7 rounded-full bg-[--primary-bg] font-bold">-</button>
+            <span class="font-bold text-sm">${qty}</span>
+            <button onclick="changeCartQty(${id},1)" class="w-7 h-7 rounded-full bg-[--primary-bg] font-bold">+</button>
+          </div>
+        </div>
+        <button onclick="removeFromCart(${id})" class="text-red-500 font-bold text-lg">🗑️</button>
+      </div>
+    `;
+  }).join("");
+  document.getElementById("cart-total").textContent = total + " " + CONFIG.currency;
+}
+function changeCartQty(id, delta){
+  state.cart[id] = (state.cart[id] || 0) + delta;
+  if(state.cart[id] <= 0) delete state.cart[id];
+  saveCart();
+  renderCart();
+}
+function removeFromCart(id){
+  delete state.cart[id];
+  saveCart();
+  renderCart();
+}
+function openCart(){
+  renderCart();
+  document.getElementById("cart-overlay").classList.remove("hidden");
+  document.getElementById("cart-drawer").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+function closeCart(){
+  document.getElementById("cart-overlay").classList.add("hidden");
+  document.getElementById("cart-drawer").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+function sendCartToWhatsApp(){
+  const ids = Object.keys(state.cart);
+  if(ids.length === 0){
+    showToast("السلة فارغة!");
+    return;
+  }
+  let msg = "مرحباً، أريد طلب المنتجات التالية:\n";
+  let total = 0;
+  ids.forEach(id=>{
+    const p = CONFIG.products.find(p=>p.id == id);
+    if(!p) return;
+    const qty = state.cart[id];
+    const sub = p.price * qty;
+    total += sub;
+    msg += `\n🛍️ ${p.name}\n   الكمية: ${qty} × ${p.price} = ${sub} ${CONFIG.currency}\n`;
+  });
+  msg += `\n💰 الإجمالي الكلي: ${total} ${CONFIG.currency}`;
+  window.open(whatsappLink(msg), "_blank");
+}
+
+/* ---------------- نموذج التواصل ---------------- */
+function sendContactForm(e){
+  e.preventDefault();
+  const name = document.getElementById("cf-name").value;
+  const phone = document.getElementById("cf-phone").value;
+  const message = document.getElementById("cf-message").value;
+  const msg = `رسالة جديدة من الموقع:\n\nالاسم: ${name}\nالهاتف: ${phone}\nالرسالة: ${message}`;
+  window.open(whatsappLink(msg), "_blank");
+  document.getElementById("contact-form").reset();
+}
+
+/* ---------------- الفروع ---------------- */
+function renderBranches(){
+  const grid = document.getElementById("branches-grid");
+  grid.innerHTML = CONFIG.branches.map(b=>`
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <iframe src="https://www.google.com/maps?q=${encodeURIComponent(b.mapQuery)}&output=embed" class="w-full h-48 border-0" loading="lazy"></iframe>
+      <div class="p-5">
+        <h4 class="font-black mb-2" style="color:var(--dark-blue)">${b.name}</h4>
+        <p class="text-sm text-[--text-gray] mb-3">📍 ${b.address}</p>
+        <div class="flex gap-2">
+          <a href="tel:${b.phone}" class="flex-1 text-center btn-primary py-2 rounded-xl text-sm font-bold">اتصال 📞</a>
+          <a href="${whatsappLink('مرحباً، أريد الاستفسار عن فرع: ' + b.name)}" target="_blank" class="flex-1 text-center whatsapp-btn py-2 rounded-xl text-sm font-bold">واتساب 💬</a>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ---------------- عناصر عامة ---------------- */
+function toggleMobileMenu(){
+  document.getElementById("mobile-menu").classList.toggle("hidden");
+  document.getElementById("mobile-menu").classList.toggle("flex");
+}
+function showToast(text){
+  const toast = document.getElementById("toast");
+  toast.textContent = text;
+  toast.classList.remove("hidden");
+  void toast.offsetWidth;
+  toast.style.animation = "none";
+  requestAnimationFrame(()=>{ toast.style.animation = ""; });
+  setTimeout(()=> toast.classList.add("hidden"), 2500);
+}
+
+/* البحث */
+document.getElementById("search-input").addEventListener("input", e=>{
+  state.searchTerm = e.target.value;
+  document.getElementById("search-input-mobile").value = e.target.value;
+  renderProducts();
+});
+document.getElementById("search-input-mobile").addEventListener("input", e=>{
+  state.searchTerm = e.target.value;
+  document.getElementById("search-input").value = e.target.value;
+  renderProducts();
+});
+
+/* إغلاق النافذة عند الضغط خارجها */
+document.getElementById("product-modal").addEventListener("click", function(e){
+  if(e.target === this) closeProductModal();
+});
+
+/* ---------------- تشغيل الموقع ---------------- */
+function init(){
+  initGeneralInfo();
+  renderCategories();
+  renderProducts();
+  renderBranches();
+  updateCartCount();
+}
+init();
+//]]></script>
+
+<!-- ============================================================
+     مطلوبة تقنيًا من بلوجر لحفظ القالب (لا تحذفها ولا تظهر في الموقع)
+     ============================================================ -->
+<div style="display:none">
+  <b:section id='blogger-required-section-1' showaddelement='no'/>
+  <b:section id='blogger-required-section-2' showaddelement='no'/>
+</div>
+
+</body>
+</html>
